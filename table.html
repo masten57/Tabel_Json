@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Tabel JSON</title>
+</head>
+<body>
+    <input type="file" id="search" placeholder="Cari...">
+    <table id="table">
+        <thead>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <script>
+        // Mengambil data JSON dari server
+        const xhr = new XMLHttpRequest();
+        xhr.open('GET', 'data.json', true);
+        xhr.onload = function() {
+            if (this.status === 200) {
+                const data = JSON.parse(this.responseText);
+                fillTable(data);
+            }
+        }
+        xhr.send();
+
+        // Mengisi tabel dengan data JSON
+        function fillTable(data) {
+            const tbody = document.querySelector('#table tbody');
+            let html = '';
+            data.forEach(function(item) {
+                html += '<tr>';
+                html += '<td>' + item.id + '</td>';
+                html += '<td>' + item.nama + '</td>';
+                html += '<td>' + item.alamat + '</td>';
+                html += '</tr>';
+            });
+            tbody.innerHTML = html;
+        }
+
+        // Pencarian pada tabel
+        const search = document.querySelector('#search');
+        search.addEventListener('keyup', function() {
+            const value = this.value.toLowerCase().trim();
+            const rows = document.querySelectorAll('#table tbody tr');
+            rows.forEach(function(row) {
+                const id = row.querySelector('td:nth-child(1)').textContent.toLowerCase().trim();
+                const nama = row.querySelector('td:nth-child(2)').textContent.toLowerCase().trim();
+                const alamat = row.querySelector('td:nth-child(3)').textContent.toLowerCase().trim();
+                if (id.indexOf(value) > -1 || nama.indexOf(value) > -1 || alamat.indexOf(value) > -1) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
